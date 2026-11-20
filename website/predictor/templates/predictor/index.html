@@ -1,0 +1,180 @@
+{% extends "predictor/base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>{{ i18n.form_title }}</h1>
+        <p class="subtitle">{{ i18n.form_subtitle }}</p>
+    </div>
+
+    {% if form.errors %}
+    <div class="alert alert-error">
+        <strong>Validation Notice:</strong> Please check the highlighted fields below.
+    </div>
+    {% endif %}
+
+    <form method="post" id="prediction-form" class="predict-form" novalidate>
+        {% csrf_token %}
+
+        <!-- Required Fields Fieldset -->
+        <fieldset class="form-fieldset">
+            <legend class="fieldset-legend">
+                <span class="legend-badge required-badge">Required</span>
+                <span class="legend-title">{{ i18n.required_section_title }}</span>
+            </legend>
+            <p class="section-desc">{{ i18n.required_section_desc }}</p>
+
+            <div class="form-grid">
+                <!-- Sex -->
+                <div class="form-group {% if form.Sex.errors %}has-error{% endif %}">
+                    <label for="{{ form.Sex.id_for_label }}" class="form-label required">
+                        {{ i18n.label_sex }}
+                    </label>
+                    {{ form.Sex }}
+                    {% if form.Sex.errors %}
+                    <span class="error-msg">{{ form.Sex.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Age -->
+                <div class="form-group {% if form.Age.errors %}has-error{% endif %}">
+                    <label for="{{ form.Age.id_for_label }}" class="form-label required">
+                        {{ i18n.label_age }}
+                    </label>
+                    {{ form.Age }}
+                    {% if form.Age.errors %}
+                    <span class="error-msg">{{ form.Age.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Person_Role -->
+                <div class="form-group {% if form.Person_Role.errors %}has-error{% endif %}">
+                    <label for="{{ form.Person_Role.id_for_label }}" class="form-label required">
+                        {{ i18n.label_person_role }}
+                    </label>
+                    {{ form.Person_Role }}
+                    {% if form.Person_Role.errors %}
+                    <span class="error-msg">{{ form.Person_Role.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Pclass -->
+                <div class="form-group {% if form.Pclass.errors %}has-error{% endif %}">
+                    <label for="{{ form.Pclass.id_for_label }}" class="form-label required">
+                        {{ i18n.label_pclass }}
+                    </label>
+                    {{ form.Pclass }}
+                    {% if form.Pclass.errors %}
+                    <span class="error-msg">{{ form.Pclass.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- Optional Fields Fieldset -->
+        <fieldset class="form-fieldset">
+            <legend class="fieldset-legend">
+                <span class="legend-badge optional-badge">Optional</span>
+                <span class="legend-title">{{ i18n.optional_section_title }}</span>
+            </legend>
+            <p class="section-desc">{{ i18n.optional_section_desc }}</p>
+
+            <div class="form-grid">
+                <!-- Name (for matching) -->
+                <div class="form-group full-width">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                        {{ i18n.label_name }}
+                    </label>
+                    {{ form.name }}
+                </div>
+
+                <!-- Occupation / Job -->
+                <div class="form-group">
+                    <label for="{{ form.Occupation.id_for_label }}" class="form-label">
+                        {{ i18n.label_occupation }}
+                    </label>
+                    {{ form.Occupation }}
+                </div>
+
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="{{ form.Title.id_for_label }}" class="form-label">
+                        {{ i18n.label_title }}
+                    </label>
+                    {{ form.Title }}
+                </div>
+
+                <!-- Fare -->
+                <div class="form-group {% if form.Fare.errors %}has-error{% endif %}">
+                    <label for="{{ form.Fare.id_for_label }}" class="form-label">
+                        {{ i18n.label_fare }}
+                    </label>
+                    {{ form.Fare }}
+                    {% if form.Fare.errors %}
+                    <span class="error-msg">{{ form.Fare.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Embarked -->
+                <div class="form-group">
+                    <label for="{{ form.Embarked.id_for_label }}" class="form-label">
+                        {{ i18n.label_embarked }}
+                    </label>
+                    {{ form.Embarked }}
+                </div>
+
+                <!-- SibSp -->
+                <div class="form-group">
+                    <label for="{{ form.SibSp.id_for_label }}" class="form-label">
+                        {{ i18n.label_sibsp }}
+                    </label>
+                    {{ form.SibSp }}
+                </div>
+
+                <!-- Parch -->
+                <div class="form-group">
+                    <label for="{{ form.Parch.id_for_label }}" class="form-label">
+                        {{ i18n.label_parch }}
+                    </label>
+                    {{ form.Parch }}
+                </div>
+
+                <!-- Height_cm -->
+                <div class="form-group">
+                    <label for="{{ form.Height_cm.id_for_label }}" class="form-label">
+                        {{ i18n.label_height }}
+                    </label>
+                    {{ form.Height_cm }}
+                </div>
+
+                <!-- Weight_kg -->
+                <div class="form-group">
+                    <label for="{{ form.Weight_kg.id_for_label }}" class="form-label">
+                        {{ i18n.label_weight }}
+                    </label>
+                    {{ form.Weight_kg }}
+                </div>
+
+                <!-- Home_Dest -->
+                <div class="form-group full-width">
+                    <label for="{{ form.Home_Dest.id_for_label }}" class="form-label">
+                        {{ i18n.label_home_dest }}
+                    </label>
+                    {{ form.Home_Dest }}
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
+            <button type="submit" id="submit-btn" class="btn btn-primary btn-large">
+                <span class="btn-text">{{ i18n.btn_predict }}</span>
+                <span class="btn-spinner hidden" id="spinner"></span>
+            </button>
+            <div id="loading-indicator" class="loading-status hidden">
+                <div class="pulse-loader"></div>
+                <p>{{ i18n.btn_predicting }}</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

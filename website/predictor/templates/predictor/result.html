@@ -1,0 +1,87 @@
+{% extends "predictor/base.html" %}
+
+{% block content %}
+<div class="result-container">
+    <div class="result-card">
+        <!-- 1. Survived / Did Not Survive Banner -->
+        {% if ml_result.survived %}
+        <div class="status-banner banner-survived">
+            <span class="status-icon">🌟</span>
+            <h1 class="status-heading">{{ i18n.status_survived }}</h1>
+            <p class="status-sub">P(Survived) &ge; 50%</p>
+        </div>
+        {% else %}
+        <div class="status-banner banner-died">
+            <span class="status-icon">🌊</span>
+            <h1 class="status-heading">{{ i18n.status_died }}</h1>
+            <p class="status-sub">P(Survived) &lt; 50%</p>
+        </div>
+        {% endif %}
+
+        <!-- 2. Core Metrics Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">{{ i18n.metric_probability }}</span>
+                <span class="metric-value {% if ml_result.survived %}text-survived{% else %}text-died{% endif %}">
+                    {{ ml_result.survival_percentage }}%
+                </span>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill {% if ml_result.survived %}bg-survived{% else %}bg-died{% endif %}" 
+                         style="width: {{ ml_result.survival_percentage }}%;"></div>
+                </div>
+            </div>
+
+            <div class="metric-card" title="{{ i18n.confidence_tooltip }}">
+                <span class="metric-label">{{ i18n.metric_confidence }}</span>
+                <span class="metric-value">{{ ml_result.confidence_percentage }}%</span>
+                <span class="metric-footnote">max(p, 1 - p) certainty</span>
+            </div>
+
+            <div class="metric-card" title="{{ i18n.completeness_tooltip }}">
+                <span class="metric-label">{{ i18n.metric_completeness }}</span>
+                <span class="metric-value">{{ ml_result.data_completeness }}%</span>
+                <span class="metric-footnote">{{ ml_result.filled_fields }} / {{ ml_result.total_fields }} features</span>
+            </div>
+        </div>
+
+        <!-- 4. Hard-coded Historical Sentence -->
+        <div class="quote-card">
+            <div class="quote-icon">“</div>
+            <p class="historical-quote">{{ outcome_sentence }}</p>
+        </div>
+
+        <!-- 5. Passenger Match Message (if any) -->
+        {% if match_result %}
+        <div class="match-card">
+            <h3 class="match-heading">🔍 {{ i18n.match_title }}</h3>
+            <p class="match-message">{{ match_result.message }}</p>
+            {% if match_result.boat or match_result.body %}
+            <div class="match-extra">
+                {% if match_result.boat %}<span class="badge badge-boat">Lifeboat: {{ match_result.boat }}</span>{% endif %}
+                {% if match_result.body %}<span class="badge badge-body">Recovery: Body #{{ match_result.body }}</span>{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- 6. Input Profile Summary -->
+        <div class="profile-summary">
+            <h4>Profile Evaluated:</h4>
+            <div class="summary-chips">
+                <span class="chip">Role: <strong>{{ cleaned_data.Person_Role }}</strong></span>
+                <span class="chip">Class/Dept: <strong>{{ cleaned_data.Pclass }}</strong></span>
+                <span class="chip">Sex: <strong>{{ cleaned_data.Sex }}</strong></span>
+                <span class="chip">Age: <strong>{{ cleaned_data.Age }}</strong></span>
+                {% if cleaned_data.Occupation %}<span class="chip">Job: <strong>{{ cleaned_data.Occupation }}</strong></span>{% endif %}
+                {% if cleaned_data.Fare is not None %}<span class="chip">Fare: <strong>£{{ cleaned_data.Fare }}</strong></span>{% endif %}
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <a href="{% url 'predict' %}" class="btn btn-secondary">
+                &larr; {{ i18n.btn_try_another }}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

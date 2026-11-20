@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ i18n.app_title }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="{% url 'predict' %}">⚓ {{ i18n.app_title }}</a>
+            </div>
+            <nav class="nav-links">
+                <a href="{% url 'predict' %}" class="nav-link">{{ i18n.nav_predict }}</a>
+                <a href="{% url 'how_it_works' %}" class="nav-link">{{ i18n.nav_how_it_works }}</a>
+                <a href="{% url 'set_language' %}?lang={{ i18n.lang_target }}" class="lang-switch-btn">
+                    🌐 {{ i18n.lang_switch }}
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <p>Titanic Survival Predictor &bull; Powered by TabPFN v2 (In-Context Bayesian Inference) &bull; Bilingual FR / EN</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

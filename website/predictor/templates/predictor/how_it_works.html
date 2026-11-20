@@ -1,0 +1,85 @@
+{% extends "predictor/base.html" %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <h1>{{ i18n.how_title }}</h1>
+        <p class="subtitle">{{ i18n.how_intro }}</p>
+    </div>
+
+    <div class="card doc-card">
+        {% if current_lang == "fr" %}
+        <h2>1. Qu'est-ce que TabPFN ?</h2>
+        <p>
+            <strong>TabPFN</strong> (<em>Prior-Data Fitted Network</em>) est un modèle d'apprentissage tabulaire révolutionnaire développé par PriorLabs et l'Université de Fribourg.
+            Contrairement aux algorithmes classiques (comme Random Forest ou XGBoost) qui effectuent une optimisation par descente de gradient sur les données d'entraînement,
+            TabPFN est un <strong>transformeur pré-entraîné</strong> sur des millions de jeux de données synthétiques générés à partir de lois de probabilité bayésiennes.
+        </p>
+        <p>
+            Lorsque nous appelons <code>fit(X, y)</code>, TabPFN ne modifie pas ses poids. Il ingère le jeu de données d'entraînement (passagers et équipage du Titanic)
+            comme <strong>contexte d'inférence en contexte</strong> (<em>in-context learning</em>). Lors de la prédiction, il calcule directement la distribution prédictive postérieure bayésienne
+            en une seule passe forward, ce qui lui confère une excellente calibration et une robustesse naturelle aux valeurs manquantes sans imputation arbitraire.
+        </p>
+
+        <h2>2. Quelles caractéristiques influencent la survie ?</h2>
+        <p>
+            Notre étude de l'importance des variables par permutation montre les facteurs prépondérants :
+        </p>
+        <ul>
+            <li><strong>Le Sexe</strong> : Le protocole « les femmes et les enfants d'abord » s'est traduit par un taux de survie de plus de 75 % chez les femmes, contre moins de 20 % chez les hommes.</li>
+            <li><strong>La Classe et le Département (Pclass)</strong> : Les passagers de 1ère classe ont bénéficié d'un accès direct et prioritaire aux embarcations (61,9 % de survie), alors que les passagers de 3ème classe étaient logés dans les ponts inférieurs (25,5 %).</li>
+            <li><strong>Le Rôle de l'Équipage</strong> : L'équipage de pont (<em>Deck Crew</em>) a survécu à 65,2 %, car il chargeait les canots. À l'inverse, l'équipage machine (<em>Engineering Crew</em>) est resté alimenter les pompes et les chaudières électriques (22,2 % de survie), et le personnel de restauration (<em>Restaurant Staff</em>) n'a survécu qu'à 4,3 %.</li>
+            <li><strong>L'Âge et les liens familiaux</strong> : Les jeunes enfants (titre <em>Master</em>) ont bénéficié d'une nette priorité d'évacuation.</li>
+        </ul>
+
+        <h2>3. Limites et Éthique du Modèle</h2>
+        <p>
+            Le modèle prédit une probabilité historique conditionnelle à un naufrage maritime survenu en avril 1912.
+        </p>
+        <ul>
+            <li><strong>Aucune fuite de données</strong> : Les colonnes prédictives évidentes (canot de sauvetage attribué <code>Boat</code>, numéro de corps <code>Body</code>) ont été strictement bannies de l'entraînement.</li>
+            <li><strong>Éléments non mesurés</strong> : Les actes de bravoure individuels, la panique locale et la localisation exacte au moment de l'impact ne peuvent pas être capturés par des variables statiques de registre.</li>
+        </ul>
+
+        {% else %}
+
+        <h2>1. What is TabPFN?</h2>
+        <p>
+            <strong>TabPFN</strong> (<em>Prior-Data Fitted Network</em>) is an in-context tabular foundation model developed by PriorLabs and the University of Freiburg.
+            Unlike traditional algorithms (such as Logistic Regression, Random Forest, or XGBoost) that update model weights via gradient descent or greedy decision-tree splits,
+            TabPFN is an attention-based <strong>Transformer</strong> meta-trained on millions of synthetic causal structural equations and Bayesian priors.
+        </p>
+        <p>
+            Calling <code>fit(X, y)</code> does not update weights. Instead, TabPFN ingests the historical Titanic records (both passengers and crew)
+            directly as conditioning context (<em>in-context learning</em>). When evaluating a new passenger profile, the model computes the exact Bayesian posterior
+            predictive probability in a single forward pass. This enables TabPFN to handle missing values natively without manual imputation and yields well-calibrated probabilities.
+        </p>
+
+        <h2>2. Which Features Actually Determine Survival?</h2>
+        <p>
+            Our permutation importance analysis on the held-out test split highlights distinct historical dynamics:
+        </p>
+        <ul>
+            <li><strong>Sex</strong>: The strict enforcement of "women and children first" resulted in an overall female survival rate exceeding 75%, versus under 20% for adult males.</li>
+            <li><strong>Class & Crew Department (Pclass)</strong>: 1st class passengers enjoyed immediate proximity to the boat deck (61.9% survival rate), while 3rd class passengers were housed deep in lower compartments (25.5%).</li>
+            <li><strong>Crew Operational Roles</strong>: The Deck Crew (officers and sailors loading the boats) achieved a 65.2% survival rate. In contrast, Engineering Crew members who stayed at their posts keeping generators and pumps running survived at only 22.2%, and the French/Italian Restaurant Staff suffered a 4.3% survival rate.</li>
+            <li><strong>Social Titles & Age</strong>: Young children (designated by title <em>Master</em>) were prioritized, whereas older adult men in lower classes faced near-zero evacuation odds.</li>
+        </ul>
+
+        <h2>3. Honest Limitations</h2>
+        <p>
+            This model predicts conditional survival odds specifically reflective of the 1912 disaster:
+        </p>
+        <ul>
+            <li><strong>Zero Outcome Leakage</strong>: All post-incident variables (such as lifeboat number <code>Boat</code> or recovered corpse index <code>Body</code>) were strictly excluded from model features.</li>
+            <li><strong>Individual Agency</strong>: Tabular records cannot measure individual physical courage, sudden panic, or immediate spatial proximity to the starboard vs port davits when the collision occurred.</li>
+        </ul>
+
+        {% endif %}
+
+        <div class="action-footer" style="margin-top: 2rem;">
+            <a href="{% url 'predict' %}" class="btn btn-primary">&larr; {{ i18n.nav_predict }}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
