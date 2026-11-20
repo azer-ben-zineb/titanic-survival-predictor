@@ -3,6 +3,11 @@
 import os
 import sys
 
+# Ensure required environment variables for TabPFN, skrub, and matplotlib
+os.environ.setdefault("SKB_DATA_DIRECTORY", "/tmp/skrub_data")
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
+os.environ.setdefault("TABPFN_ALLOW_CPU_LARGE_DATASET", "1")
+
 
 def main():
     """Run administrative tasks."""
@@ -16,6 +21,7 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
 
 
 if __name__ == '__main__':
